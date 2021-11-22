@@ -38,26 +38,26 @@ d3.json("https://gist.githubusercontent.com/lnicoletti/cdb0d6df5476da695f307b78e
 
 
 
-    // legendIndex = () => {
-    //     const k = 70/n;
-    //     const arrow = DOM.uid();
-    //     //font-family=sans-serif
-    //     return svg`<g class="legend">
-    //     <g transform="translate(-${k * n / 2},-${k * n / 2}) rotate(-45 ${k * n / 2},${k * n / 2})">
-    //     <marker id="${arrow.id}" markerHeight=10 markerWidth=10 refX=6 refY=3 orient=auto>
-    //         <path d="M0,0L9,3L0,6Z" />
-    //     </marker>
-    //     ${d3.cross(d3.range(n), d3.range(n)).map(([i, j]) => svg`<rect width=${k} height=${k} x=${i * k} y=${(n - 1 - j) * k} fill=${colors[j * n + i]}>
-    //         <title>${dataBivar.title[0]}${labels[j] && ` (${labels[j]})`}
-    // ${dataBivar.title[1]}${labels[i] && ` (${labels[i]})`}</title>
-    //     </rect>`)}
-    //     <line marker-end="${arrow}" x1=0 x2=${n * k} y1=${n * k} y2=${n * k} stroke=black stroke-width=1.5 />
-    //     <line marker-end="${arrow}" y2=0 y1=${n * k} stroke=black stroke-width=1.5 />
-    //     <text font-weight="bold" dy="0.71em" transform="rotate(90) translate(${n / 2 * k},6)" text-anchor="middle">${dataBivar.title[0]}</text>
-    //     <text font-weight="bold" dy="0.71em" transform="translate(${n / 2 * k},${n * k + 6})" text-anchor="middle">${dataBivar.title[1]}</text>
-    //     </g>
-    // </g>`;
-    // }
+    legendIndex = () => {
+        const k = 70/n;
+        // const arrow = 1;
+        //font-family=sans-serif
+        return svg`<g class="legend">
+        <g transform="translate(-${k * n / 2},-${k * n / 2}) rotate(-45 ${k * n / 2},${k * n / 2})">
+          <marker id="arrow" markerHeight=10 markerWidth=10 refX=3 refY=3 orient=auto>
+            <path d="M0,0L6,3L0,6Z" />
+          </marker>
+          ${d3.cross(d3.range(n), d3.range(n)).map(([i, j]) => svg`<rect width=${k} height=${k} x=${i * k} y=${(n - 1 - j) * k} fill=${colors[j * n + i]}>
+            <title>${dataBivar.title[0]}${labels[j] && ` (${labels[j]})`}
+      ${dataBivar.title[1]}${labels[i] && ` (${labels[i]})`}</title>
+          </rect>`)}
+          <line marker-end="url(#arrow)" x1=0 x2=${n * k} y1=${n * k} y2=${n * k} stroke=black stroke-width=1.5 />
+          <line marker-end="url(#arrow)" y2=0 y1=${n * k} stroke=black stroke-width=1.5 />
+          <text font-weight="bold" dy="0.71em" transform="rotate(90) translate(${n / 2 * k},6)" text-anchor="middle">${dataBivar.title[0]}</text>
+          <text font-weight="bold" dy="0.71em" transform="translate(${n / 2 * k},${n * k + 6})" text-anchor="middle">${dataBivar.title[1]}</text>
+        </g>
+      </g>`;
+      }
 
     colorExpr = ['match', ['string',['get', 'colorHex']]].concat(colors.map(d=>[d,d]).flat()).concat('#ccc')
 
@@ -169,10 +169,10 @@ function showTooltip(map, e) {
       // .style("overflow", "visible")
                 // .attr('transform', `translate(${0}, ${marginTop+20})`)
     
-    // leg.append(legendIndex)
-    //           // .attr("transform", `translate(100, 100)`)
-    //           // .attr("transform", `rotate(45)`)
-    //           .attr("transform", `rotate(45), translate(${185},${60})`)
+    leg.append(legendIndex)
+              // .attr("transform", `translate(100, 100)`)
+              // .attr("transform", `rotate(45)`)
+              .attr("transform", `rotate(45), translate(${170},${80})`)
     //           // .attr("transform", `rotate(45), translate(${100},${0})`)
     //           .attr("class", "bivlegend")
           // .attr("transform", `rotate(45), translate(${700},${-400})`);
@@ -327,3 +327,77 @@ map.on('mouseleave', layerId, () => {
 
 
 }
+
+function template(render, wrapper) {
+    return function(strings) {
+      var string = strings[0],
+          parts = [], part,
+          root = null,
+          node, nodes,
+          walker,
+          i, n, j, m, k = -1;
+  
+      // Concatenate the text using comments as placeholders.
+      for (i = 1, n = arguments.length; i < n; ++i) {
+        part = arguments[i];
+        if (part instanceof Node) {
+          parts[++k] = part;
+          string += "<!--o:" + k + "-->";
+        } else if (Array.isArray(part)) {
+          for (j = 0, m = part.length; j < m; ++j) {
+            node = part[j];
+            if (node instanceof Node) {
+              if (root === null) {
+                parts[++k] = root = document.createDocumentFragment();
+                string += "<!--o:" + k + "-->";
+              }
+              root.appendChild(node);
+            } else {
+              root = null;
+              string += node;
+            }
+          }
+          root = null;
+        } else {
+          string += part;
+        }
+        string += strings[i];
+      }
+  
+      // Render the text.
+      root = render(string);
+  
+      // Walk the rendered content to replace comment placeholders.
+      if (++k > 0) {
+        nodes = new Array(k);
+        walker = document.createTreeWalker(root, NodeFilter.SHOW_COMMENT, null, false);
+        while (walker.nextNode()) {
+          node = walker.currentNode;
+          if (/^o:/.test(node.nodeValue)) {
+            nodes[+node.nodeValue.slice(2)] = node;
+          }
+        }
+        for (i = 0; i < k; ++i) {
+          if (node = nodes[i]) {
+            node.parentNode.replaceChild(parts[i], node);
+          }
+        }
+      }
+  
+      // Is the rendered content
+      // … a parent of a single child? Detach and return the child.
+      // … a document fragment? Replace the fragment with an element.
+      // … some other node? Return it.
+      return root.childNodes.length === 1 ? root.removeChild(root.firstChild)
+          : root.nodeType === 11 ? ((node = wrapper()).appendChild(root), node)
+          : root;
+    };
+  }
+
+svg = template(function(string) {
+    var root = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    root.innerHTML = string.trim();
+    return root;
+  }, function() {
+    return document.createElementNS("http://www.w3.org/2000/svg", "g");
+  });
