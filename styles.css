@@ -41,3 +41,13 @@ body, svg {
        font-weight: 300;
       font-size: 13px;
 }
+
+#bivmap {
+        height: 100%;
+        width: 100%;
+}
+
+#bivmapcontainer {
+        height: 100vh;
+    width: auto;
+}
