@@ -290,13 +290,9 @@ let hoveredStateId = null;
 source.setData(dataColored);
 
 // tooltip
-// map.on('click', layerId, (e) => {
-//     console.log(e)
-//   new mapboxgl.Popup()
-//   .setLngLat(e.lngLat)
-//   .setHTML("In this block: " + (e.features[0].properties.DBpop2016) + "people are at a flood risk of " + (e.features[0].properties.IMP))
-//   .addTo(map);
-// });
+map.on('click', layerId, (e) => {
+  showTooltip(map, e)
+});
     
     // Change the cursor to a pointer when
     // the mouse is over the states layer.
