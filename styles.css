@@ -82,6 +82,9 @@ body, svg {
         cursor: pointer
 }
 
+/* body { margin: 0; padding: 0; } */
+/* #bivmap { position: absolute; top: 0; bottom: 0; } */
+
 /* #bivmap {
         height: 100%;
         width: 100%;
