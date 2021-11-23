@@ -72,6 +72,8 @@ body, svg {
 #titleContainer {
       width: 40vw;
       height: 10vh;
+      /* background:grey; */
+      /* opacity:0.5 */
       /* font-size: 100%; */
 }    
 

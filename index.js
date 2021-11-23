@@ -1,9 +1,9 @@
 mapboxgl.accessToken = "pk.eyJ1IjoibG5pY29sZXR0aSIsImEiOiJjazZ1a3I5cjgwNWxtM2xxcDlva2NvaDNzIn0.xDhib2HysGYu4_oIkgHHow"
 
 config = ({
-    lng: -123.0207,
-    lat: 49.2667,
-    zoom: 10.5,
+    lng: -123.0407,
+    lat: 49.2767,
+    zoom: 11.1,
     fillOpacity: 0.5,
     colorScaleImp: ["#f7fcfd","#e0ecf4","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
     colorScalePop: ["#fff5eb","#fee6ce","#fdd0a2","#fdae6b","#fd8d3c","#f16913","#d94801","#8c2d04"],
@@ -22,7 +22,12 @@ d3.json("https://gist.githubusercontent.com/lnicoletti/cdb0d6df5476da695f307b78e
         return colors[yBivar(b) + xBivar(a) * n];
         // }
     }
-    colors = ["#f0f0f0", "#ead2d2", "#e4b5b5", "#de9696", "#d87676", "#d65454", "#d7eded", "#d7d2d2", "#d7b5b5", "#d79696", "#d77676", "#d15252", "#bdeaea", "#bdd2d2", "#bdb5b5", "#bd9696", "#bd7676", "#bd5252", "#a0e6e6", "#a0d2d2", "#a0b5b5", "#a09696", "#a07676", "#a05252", "#81e2e2", "#81d2d2", "#81b5b5", "#819696", "#817676", "#815252", "#5ddede", "#5dd2d2", "#5db5b5", "#5d9696", "#5d7676", "#5d5252"]
+    // colors = ["#f0f0f0", "#ead2d2", "#e4b5b5", "#de9696", "#d87676", "#d65454", "#d7eded", "#d7d2d2", "#d7b5b5", "#d79696", "#d77676", "#d15252", "#bdeaea", "#bdd2d2", "#bdb5b5", "#bd9696", "#bd7676", "#bd5252", "#a0e6e6", "#a0d2d2", "#a0b5b5", "#a09696", "#a07676", "#a05252", "#81e2e2", "#81d2d2", "#81b5b5", "#819696", "#817676", "#815252", "#5ddede", "#5dd2d2", "#5db5b5", "#5d9696", "#5d7676", "#5d5252"]
+
+    // colors = ["#e8e8e8", "#e0e1c0", "#d8da97", "#cfd26b", "#c6ca3d", "#bcc20c", "#c7c6e0", "#c7c6c0", "#c7c697", "#c7c66b", "#c6c63d", "#b9bf0b", "#a7a5d8", "#a7a5c0", "#a7a597", "#a7a56b", "#a7a53d", "#a7a50c", "#8884cf", "#8884c0", "#888497", "#88846b", "#88843d", "#88840c", "#6863c7", "#6863c0", "#686397", "#68636b", "#68633d", "#68630c", "#4943bf", "#4741bf", "#474197", "#47416b", "#47413d", "#47410c"]
+    colors = ["#ebebeb", "#ead8cb", "#eac4aa", "#e9af87", "#e99964", "#e9823d", "#cccdde", "#cbbcbf", "#cbaaa0", "#ca9880", "#ca855e", "#c97139", "#acb0d1", "#aba1b4", "#ab9297", "#ab8379", "#ab7259", "#aa6136", "#8d92c5", "#8d86aa", "#8d7a8e", "#8c6c71", "#8c5f54", "#8c5033", "#6e75b8", "#6e6c9f", "#6e6285", "#6e576a", "#6e4c4e", "#6d412f", "#5159ac", "#505294", "#504a7c", "#504263", "#503a49", "#50312c"]
+    // colors = ["#efefef", "#e8d0cd", "#e0b2aa", "#d79288", "#cf7164", "#c64d3b", "#dce4ed", "#d5c6cc", "#ceaaa9", "#c68b87", "#bf6c63", "#b64a3b", "#c8d9ea", "#c1bdc9", "#bba2a7", "#b38585", "#ad6762", "#a5463a", "#b4cde8", "#aeb3c8", "#a899a6", "#a27e84", "#9c6161", "#954339", "#a1c3e6", "#9ca9c5", "#9691a4", "#917782", "#8b5c60", "#853f39", "#8cb7e4", "#889fc3", "#8388a2", "#7e7081", "#7a575f", "#743b38"]
+
 
     n = Math.floor(Math.sqrt(colors.length))
     
@@ -34,7 +39,7 @@ d3.json("https://gist.githubusercontent.com/lnicoletti/cdb0d6df5476da695f307b78e
 
     
 
-    labels = ["low", "", "high"]
+    labels = ["low", "", "", "", "", "high"]
 
 
 
@@ -94,9 +99,20 @@ function showMap(dataColored, colorExpr) {
         style: 'mapbox://styles/mapbox/light-v9',
         // style: 'mapbox://styles/lnicoletti/ckwaumva16h1315t6wcywwbk9',
         maxZoom: 14,
-        minZoom: 9.5
+        minZoom: 9.8
       });
     // }
+
+    // var mq = window.matchMedia( "(min-width: 420px)" );
+
+    // if (mq.matches){
+    //     map.setCenter([-123.4807, 49.2767]); //set map zoom level for desktop size
+    // } else {
+    //     map.setCenter([
+    //       config.lng,
+    //       config.lat,
+    //     ]); //set map zoom level for mobile size
+    // };
     
     map.addControl(new mapboxgl.FullscreenControl(), 'top-right'); //zoom controls
     map.addControl(new mapboxgl.NavigationControl(), 'top-right'); //zoom controls
@@ -122,11 +138,11 @@ function showTooltip(map, e) {
  
    if (visibleBlock===true) {
       const impPop = e.features[0].properties.IMP*e.features[0].properties.pop_den/1000
-      const aLevel = impPop>20?"very high":
-               (impPop>12)&&(impPop<=20)?"high":
-               (impPop>8)&&(impPop<=12)?"average":
-               (impPop>3)&&(impPop<=8)?"low":
-               (impPop<=3)?"very low":""
+      const aLevel = impPop>10?"very high":
+               (impPop>8)&&(impPop<=10)?"high":
+               (impPop>4)&&(impPop<=8)?"average":
+               (impPop>1)&&(impPop<=4)?"low":
+               (impPop<=1)?"very low":""
        
      const color = e.features[0].properties.colorHex
    
@@ -244,6 +260,9 @@ function renderLegend(map) {
 
 function renderMapbox(map, dataColored, colorExpr) {
 
+var baseWidth = 0.1; // 20px
+var baseZoom = 11.1; // zoom 10
+
 const sourceId = 'van-blocks';
 const layerId = `${sourceId}-layer`;
 const outlineId = `${sourceId}-outline`;
@@ -292,7 +311,16 @@ let hoveredStateId = null;
     // interactive: false,
     paint: {
         'line-color': 'white',
-        'line-width': 0.05
+        'line-opacity':0.4,
+        "line-width": {
+          "type": "exponential",
+          "base": 2,
+          "stops": [
+              [0, baseWidth * Math.pow(2, (0 - baseZoom))],
+              [24, baseWidth * Math.pow(2, (24 - baseZoom))]
+          ]
+      },
+        // 'line-width': 0.1
         // [
         //   'interpolate',
         //   // Set the exponential rate of change to 0.5
