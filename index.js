@@ -26,7 +26,7 @@ d3.json("https://gist.githubusercontent.com/lnicoletti/cdb0d6df5476da695f307b78e
 
     n = Math.floor(Math.sqrt(colors.length))
     
-    dataBivar = Object.assign(new Map(data.features.map(d=>d.properties).map((d, i) => [i, [d.IMP, d.pop_den]])),{title: ["Flood Risk", "Pop. Density"]})
+    dataBivar = Object.assign(new Map(data.features.map(d=>d.properties).map((d, i) => [i, [d.IMP, d.pop_den]])),{title: ["Impermeability", "Pop. Density"]})
     yBivar = d3.scaleQuantile(Array.from(dataBivar.values(), d => d[1]), d3.range(n))
     xBivar = d3.scaleQuantile(Array.from(dataBivar.values(), d => d[0]), d3.range(n))
 
@@ -42,8 +42,9 @@ d3.json("https://gist.githubusercontent.com/lnicoletti/cdb0d6df5476da695f307b78e
         const k = 70/n;
         // const arrow = 1;
         //font-family=sans-serif
+        // <g transform="translate(-${k * n / 2},-${k * n / 2}) rotate(-45 ${k * n / 2},${k * n / 2})">
         return svg`<g class="legend">
-        <g transform="translate(-${k * n / 2},-${k * n / 2}) rotate(-45 ${k * n / 2},${k * n / 2})">
+        
           <marker id="arrow" markerHeight=10 markerWidth=10 refX=3 refY=3 orient=auto>
             <path d="M0,0L6,3L0,6Z" />
           </marker>
@@ -53,8 +54,10 @@ d3.json("https://gist.githubusercontent.com/lnicoletti/cdb0d6df5476da695f307b78e
           </rect>`)}
           <line marker-end="url(#arrow)" x1=0 x2=${n * k} y1=${n * k} y2=${n * k} stroke=black stroke-width=1.5 />
           <line marker-end="url(#arrow)" y2=0 y1=${n * k} stroke=black stroke-width=1.5 />
+          <line marker-end="url(#arrow)" x1=0 x2=${n * k-2} y1=${n * k} y2=${n-4} stroke=black stroke-width=1.5 opacity=0.3 stroke-dasharray="4 3" />
           <text font-weight="bold" dy="0.71em" transform="rotate(90) translate(${n / 2 * k},6)" text-anchor="middle">${dataBivar.title[0]}</text>
           <text font-weight="bold" dy="0.71em" transform="translate(${n / 2 * k},${n * k + 6})" text-anchor="middle">${dataBivar.title[1]}</text>
+          <text font-weight="bold" dy="0.71em" transform="rotate(-45) translate(${0},${n * k - 30})" text-anchor="middle" opacity=0.3 >Hazard</text>
         </g>
       </g>`;
       }
@@ -137,7 +140,7 @@ function showTooltip(map, e) {
        .addTo(map);
        
          d3.selectAll(".mapboxgl-popup-content")
-             .style("background-color", "#e9f0f5")
+             .style("background-color", "#f4f4f2")
              .style("fill", "black")
          d3.selectAll(".mapboxgl-popup")
            .style("max-width", "200px")
@@ -148,11 +151,11 @@ function showTooltip(map, e) {
    // .attr("rx", 50)
  }
 
- function renderLegend(map) {
+function renderLegend(map) {
 
     // const mapContainer = map.getCanvasContainer();
   
-    const dim = 240
+    const dim = 100
     const svg = d3
       // .select(mapContainer)
       .select("#bivmap")
@@ -161,6 +164,7 @@ function showTooltip(map, e) {
         .attr('height', dim)
         .style('position', 'absolute')
         .style('z-index', 0)
+        .attr("id", "legend")
         // .style("transform", `translate(45px, 100px)`)
       
     const leg = svg.append("g")
@@ -170,52 +174,73 @@ function showTooltip(map, e) {
                 // .attr('transform', `translate(${0}, ${marginTop+20})`)
     
     leg.append(legendIndex)
-              // .attr("transform", `translate(100, 100)`)
+    .style("transform", `translate(20px, 10px)`)
+        
+              
               // .attr("transform", `rotate(45)`)
-              .attr("transform", `rotate(45), translate(${170},${80})`)
+              // .attr("transform", `rotate(45), translate(${170},${80})`)
     //           // .attr("transform", `rotate(45), translate(${100},${0})`)
     //           .attr("class", "bivlegend")
           // .attr("transform", `rotate(45), translate(${700},${-400})`);
   
-    const title = d3
-      // .select(mapContainer)
-      .select("#bivmap")
+    const titleCont = d3
+          .select("#bivmap")
+          .append("div")
+          .attr('id', "titleContainer")
+
+    const title = //d3
+      // .select("#bivmap")
       // .append("div")
       //  .attr('width', dim)
       // .attr('height', dim)
-      .append("text")
+      titleCont.append("text")
       .text("FLOOD-HAZARD LOCATOR")
-      .style("transform", "translate(20px,30px)")
+      // .style("transform", "translate(20px,30px)")
         .attr("class", "mapTitle")
         .style('position', 'absolute')
   
-    const subTitle = d3
-      // .select(mapContainer)
-      .select("#bivmap")
+    const subTitle = //d3
+      // .select("#bivmap")
       // .append("div")
       //  .attr('width', dim)
       // .attr('height', dim)
-      .append("text")
+      titleCont.append("text")
       .text("Mapping Flood Hazard in the Vancouver Metropolitan Region")
-      .style("transform", "translate(20px,70px)")
+      // .style("transform", "translate(20px,70px)")
         .attr("class", "mapSubTitle")
         .style('position', 'absolute')
         
+    const info = subTitle.append('tspan')
+                          .html(" &#x1F6C8")
+                          .attr("id", "infoPoint")
+                          // .on("mouseover", (event, d) => d3.select(this).attr("font-weight", 900))
+                          .on("click", function(event, d) {
+                            // toolTipScale.domain([0, -90])
+                            // console.log(d)
+                            return showInfo(event, d)
+                          })
+
+    // const circle = 
+    // titleCont.append("circle")
+    //           .attr("cx", 200)
+    //           .attr("cy", 200)
+    //           .attr("r", 4)
+    //           .attr("stroke", "black")
+    //           .attr("fill", none)
   
-    const credit = d3
-      // .select(mapContainer)
-      .select("#bivmap")
+    const credit = //d3
+      // .select("#bivmap")
       // .append("div")
       //  .attr('width', dim)
       // .attr('height', dim)
-      .append("html")
+      titleCont.append("html")
       .html("by <a href='https://www.leonardonicoletti.com/' style='text-decoration:underline; color:black' target='_blank'><b>LEONARDO NICOLETTI</b></a>")
-      .style("transform", "translate(10px,100px)")
+      // .style("transform", "translate(10px,100px)")
         .attr("class", "mapCredit")
         .style('position', 'absolute')
   
     
-  }
+}
 
 function renderMapbox(map, dataColored, colorExpr) {
 
@@ -324,6 +349,42 @@ map.on('mouseleave', layerId, () => {
 
 }
 
+function showInfo(event, d){
+
+      console.log(event.pageX)
+      tooltip
+      .transition()
+      .duration(0)
+      .style("opacity", 1)
+      
+      tooltip
+      .html(`In light of the flooding events that recently occured in British Columbia, 
+            this map is a data-driven tool for identifying areas within the <b>Greater Vancouver Region</b>
+            where <b>flood hazard</b> may potentially be more severe during extreme flood events. <br><br>This map
+            combines data on ground impermeability from 
+            <a href='http://www.metrovancouver.org/data/Data/EcoHealthIndicators-CanopyandImperviousness/MVCCISPPACensusBlock2014rel2019.zip' 
+            style='text-decoration:underline; color:black' target='_blank'><b>Metro Vancouver</b></a> and data on population 
+            density from <a href='https://www12.statcan.gc.ca/census-recensement/index-eng.cfm' 
+            style='text-decoration:underline; color:black' target='_blank'><b>Statistics Canada</b></a> to compute a simple index of <i>Flood Hazard</i> for 
+            each census block of the Greater Vancouver Region. According to this index, flood hazard is 
+            highest in areas where both ground impermeability
+            and population density are high. In contrast, areas where population density is high but ground
+            impermeability is low or where population density is low but ground impermeability is high are
+            categorized as low hazard areas by this index.<br><br>
+            Of course, more elements could be incorporated to improve the accuracy of this index, so this
+            map is meant to serve as an educational tool only and should not be used to make conclusions 
+            on how at-risk your area is. Nonetheless, it can provide high level insight for planners as to
+            which areas may deserve more attention during extreme flood events.`)
+
+      .attr("class", "infoText")
+      .style("background", "#f4f4f2")
+      .style("color", "black")
+      // .style("border", "grey")
+      .style("left", event.clientX + "px")
+      .style("top", event.clientY + 10 + "px")
+      .style("z-index", 1);
+}
+
 function template(render, wrapper) {
     return function(strings) {
       var string = strings[0],
@@ -389,6 +450,26 @@ function template(render, wrapper) {
           : root;
     };
   }
+
+
+d3.select("#bivmap").on("click", (event, d)=>tooltip.style("opacity", 0))
+
+tooltip = d3
+  .select("#bivmap")
+  .append("div")
+  .attr("class", "tooltip")
+  // .style("font-size", "10pt")
+  // .style("font-family", "Lato")
+  .style("position", "absolute")
+  .style("text-align", "left")
+  .style("width", "auto")
+  .style("height", "auto")
+  .style("padding", "5px")
+  .style("max-width", "300px")
+  // .style("background", "black")
+  .attr("stroke", "white")
+  .style("pointer-events", "none")
+  .style("opacity", 0)
 
 svg = template(function(string) {
     var root = document.createElementNS("http://www.w3.org/2000/svg", "g");
