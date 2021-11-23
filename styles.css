@@ -13,7 +13,7 @@ body, svg {
         /* font-size: auto; */
         /* font-size: 60px; */
         /* font-size: 4vw; */
-        font-size: calc(23px + 2.2vw);
+        font-size: calc(16px + 2.2vw);
         text-transform:uppercase;
         /* transform: translate(20px, 4vh) */
         transform: translate(20px, calc(10px + 1vw))
@@ -26,7 +26,7 @@ body, svg {
         font-family: 'Oswald', sans-serif;
         font-weight: 400;
         /* font-size: 25px; */
-        font-size: calc(9.5px + 1vw);
+        font-size: calc(6.8px + 1vw);
         /* transform: translate(20px, 9vh) */
         transform: translate(20px, calc(24px + 2.8vw))
         /* transform: translate(20px,70px) */

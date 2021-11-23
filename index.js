@@ -227,7 +227,7 @@ function renderLegend(map) {
         .style('position', 'absolute')
         
     const info = subTitle.append('tspan')
-                          .html(" &#x1F6C8")
+                          .html(" &#9432")
                           .attr("id", "infoPoint")
                           // .on("mouseover", (event, d) => d3.select(this).attr("font-weight", 900))
                           .on("click", function(event, d) {
