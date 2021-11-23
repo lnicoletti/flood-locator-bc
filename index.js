@@ -408,7 +408,7 @@ function showInfo(event, d){
       .style("background", "#f4f4f2")
       .style("color", "black")
       // .style("border", "grey")
-      .style("left", event.clientX + "px")
+      .style("left", event.clientX - 245 + "px")
       .style("top", event.clientY + 10 + "px")
       .style("z-index", 1);
 }
@@ -493,7 +493,7 @@ tooltip = d3
   .style("width", "auto")
   .style("height", "auto")
   .style("padding", "5px")
-  .style("max-width", "300px")
+  .style("max-width", "250px")
   // .style("background", "black")
   .attr("stroke", "white")
   .style("pointer-events", "none")
